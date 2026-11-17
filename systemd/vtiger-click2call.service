@@ -6,6 +6,8 @@ Wants=network-online.target
 [Service]
 Type=simple
 EnvironmentFile=/etc/pbx-connector.env
+# Show print() output in journalctl immediately (Python buffers it otherwise)
+Environment=PYTHONUNBUFFERED=1
 ExecStart=/opt/vtiger-asterisk-pjsip-connector/venv/bin/python /opt/vtiger-asterisk-pjsip-connector/click2call/click2call.py
 Restart=always
 RestartSec=5
