@@ -1,0 +1,15 @@
+# Local configuration with secrets
+crm-endpoint/config.php
+*.env
+!pbx-connector.env.example
+
+# Runtime files
+*.log
+*.log.*
+pbx_failed_events.jsonl
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

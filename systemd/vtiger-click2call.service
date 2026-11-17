@@ -1,0 +1,14 @@
+[Unit]
+Description=vtiger click-to-call service (vtiger -> Asterisk AMI Originate)
+After=network-online.target asterisk.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/pbx-connector.env
+ExecStart=/opt/vtiger-asterisk-pjsip-connector/venv/bin/python /opt/vtiger-asterisk-pjsip-connector/click2call/click2call.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

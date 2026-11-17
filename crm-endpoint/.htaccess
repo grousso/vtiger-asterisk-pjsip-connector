@@ -1,0 +1,5 @@
+# Only pbx.php may be requested over HTTP.
+# Blocks direct downloads of config.php, the log file and the library.
+<FilesMatch "^(?!pbx\.php$).*$">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,14 @@
+[Unit]
+Description=vtiger PBX monitor (Asterisk AMI -> vtiger PBXManager)
+After=network-online.target asterisk.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/pbx-connector.env
+ExecStart=/opt/vtiger-asterisk-pjsip-connector/venv/bin/python /opt/vtiger-asterisk-pjsip-connector/pbx-monitor/vtiger_pbx_monitor.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
