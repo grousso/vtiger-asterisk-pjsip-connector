@@ -12,6 +12,7 @@ All settings are read from environment variables (see ../pbx-connector.env.examp
 """
 
 import hmac
+import logging
 import os
 import re
 import threading
@@ -20,6 +21,10 @@ from asterisk.manager import Manager
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+
+# Flask's built-in access log prints the full request URL, which contains the
+# secret (vtiger sends it in the query string). Keep only warnings/errors.
+logging.getLogger("werkzeug").setLevel(logging.WARNING)
 
 # ------ AMI settings ------
 AMI_HOST = os.environ.get("AMI_HOST", "127.0.0.1")

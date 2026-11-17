@@ -161,7 +161,7 @@ def is_internal(number) -> bool:
 def map_user(ext) -> str:
     ext = str(ext)
     if ext not in EXTENSION_MAP:
-        logger.info("Extension '%s' not in EXTENSION_MAP - sent as-is (endpoint will look it up)", ext)
+        logger.debug("Extension '%s' not in EXTENSION_MAP - sent as-is (endpoint will look it up)", ext)
         return ext
     return EXTENSION_MAP[ext]
 
