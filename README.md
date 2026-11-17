@@ -114,9 +114,41 @@ curl -s -X POST "$PBX_API_URL" -H "X-PBX-Secret: $PBX_API_SECRET" \
    - *Outbound Context*: `from-internal` (FreePBX)
 2. For every user, set **CRM Phone Extension** (*My Preferences*) to their PJSIP extension.
    This is how calls are matched to users and how the popup knows whom to show.
-   (Alternatively, set `PBX_EXTENSION_MAP` in the env file.)
+   (Alternatively, use an extension map - see below.)
 3. Contacts are matched by the **Mobile** field, so store numbers the way the
    PBX presents them (e.g. `6912345678`, or with the country code if your trunk sends one).
+
+#### Extension map (optional)
+
+Instead of relying on the *CRM Phone Extension* field, you can tell the monitor
+directly which vtiger user owns each PBX extension. Set `PBX_EXTENSION_MAP` in
+`/etc/pbx-connector.env`:
+
+```ini
+PBX_EXTENSION_MAP={"1": "19x1", "2": "19x5", "3": "19x8", "4": "19x12"}
+```
+
+- The **key** is the PJSIP extension (`"1"`, `"2"`, …).
+- The **value** is the vtiger user id in webservice format: `19x` + the user's record id.
+  To find the record id, open the user in vtiger (*Settings → Users*, click the user)
+  and look at the browser address bar: `...&record=5` → the value is `19x5`.
+- It must be valid JSON **on a single line**: double quotes around keys and values,
+  commas between pairs, no comma after the last pair.
+- Extensions that are not in the map still work: they are looked up by the
+  *CRM Phone Extension* field, and if nothing matches, `fallback_user_id` from
+  `config.php` is used.
+
+After editing the file, restart the monitor:
+
+```bash
+systemctl restart vtiger-pbx-monitor
+```
+
+To check that the JSON is valid before restarting:
+
+```bash
+python3 -c 'import json,re; t=open("/etc/pbx-connector.env").read(); print(json.loads(re.search(r"^PBX_EXTENSION_MAP=(.*)$", t, re.M).group(1)))'
+```
 
 ### 5. Start the services
 
