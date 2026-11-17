@@ -50,10 +50,12 @@ API_SECRET = os.environ.get("PBX_API_SECRET", "")
 #   PBX_EXTENSION_MAP='{"101": "19x5", "102": "19x8"}'
 # Extensions not in the map are sent as-is; the PHP endpoint then looks up the
 # vtiger user whose "CRM Phone Extension" (phone_crm_extension) field matches.
+_EXTENSION_MAP_ERROR = None
 try:
-    EXTENSION_MAP = json.loads(os.environ.get("PBX_EXTENSION_MAP", "{}"))
-except json.JSONDecodeError:
+    EXTENSION_MAP = json.loads(os.environ.get("PBX_EXTENSION_MAP", "") or "{}")
+except json.JSONDecodeError as _exc:
     EXTENSION_MAP = {}
+    _EXTENSION_MAP_ERROR = str(_exc)
 
 # ------ Local files (dead-letter queue + logs) ------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -314,6 +316,10 @@ def run():
     if not AMI_USER or not AMI_PASS:
         logger.error("AMI_USER / AMI_PASS are not set - see pbx-connector.env.example")
         return
+    if _EXTENSION_MAP_ERROR:
+        logger.error("PBX_EXTENSION_MAP is not valid JSON (%s) - ignoring it", _EXTENSION_MAP_ERROR)
+    elif EXTENSION_MAP:
+        logger.info("Extension map loaded: %s", EXTENSION_MAP)
     if not API_SECRET:
         logger.warning("PBX_API_SECRET is empty - the CRM endpoint will reject all events")
 

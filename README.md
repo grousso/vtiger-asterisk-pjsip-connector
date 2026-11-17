@@ -138,7 +138,8 @@ PBX_EXTENSION_MAP={"1": "19x1", "2": "19x5", "3": "19x8", "4": "19x12"}
   *CRM Phone Extension* field, and if nothing matches, `fallback_user_id` from
   `config.php` is used.
 
-After editing the file, restart the monitor:
+After editing the file, restart the monitor. On startup its log shows
+`Extension map loaded: {...}`, or an error if the JSON is invalid:
 
 ```bash
 systemctl restart vtiger-pbx-monitor
